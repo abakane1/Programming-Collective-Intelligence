@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 # 定义编码格式
+# 相似度评价函数集
+
 from recommendations import critics
 
 # print (critics['Lisa Rose']['Lady in the Water'])
 
 # pow (n,2) 计算2次方
 from math import sqrt
+
 
 
 # print(sqrt(pow(4.5-4,2)+pow(1-2,2)))
@@ -25,7 +28,7 @@ def sim_distance(prefs, person1, person2):
     return 1 / (1 + sqrt(sum_of_sqiares))
 
 
-print (sim_distance(critics, 'Lisa Rose', 'Gene Seymour'))
+# print (sim_distance(critics, 'Lisa Rose', 'Gene Seymour'))
 
 
 # 皮尔逊相关系数，相对于距离算法，修正grade inflation
@@ -49,15 +52,42 @@ def sim_pearson(prefs, p1, p2):
     return r
 
 
-print sim_pearson(critics, 'Lisa Rose', 'Gene Seymour')
+# print sim_pearson(critics, 'Lisa Rose', 'Gene Seymour')
 
 
-# 从字典中返回最为匹配
-# 返回结果的个数和相似度函数均为可选参数
-def topMatches(prefs, person, n=5, similarity=sim_pearson):
-    scores = [(similarity(prefs, person, other), other)
-              for other in prefs if other != person]
-    scores.sort()
-    scores.reverse()
-    return scores[0:n]
-print topMatches(critics,'Toby', n=2)
+# 重构数据格式 将人对每部电影 的评价，转化为每部电影 多个人的评分
+def transFormPrefsByMovie(prefs, movie):
+    result = {}
+    temp ={}
+    result.setdefault(movie,temp)
+    for person in prefs:
+        for item in prefs[person]:
+            if item == movie:
+                result[movie][person] = prefs[person][item]
+    return result
+
+def transFormPrefs(prefs):
+    result={}
+    for person in prefs:
+        for item in prefs[person]:
+            result.setdefault(item,{})
+
+            result[item][person]=prefs[person][item]
+    return result
+# print transFormPrefs(critics, 'Lady in the Water')
+
+# print(critics['Lisa Rose'])
+
+def calculateSimilarItems(prefs,n=10):
+    import topMatches
+    # 建立字典，以给出与这些物品最为相近的所有其他物品
+    result={}
+    
+    itemPrefs = transFormPrefs(prefs)
+    c=0
+    for item in itemPrefs:
+        c+=1
+        if c%100==0: print "%d / %d" % (c,len(itemPrefs))
+        scores = topMatches(itemPrefs,item,n=n,similarity = sim_distance)
+        result[item]=scores
+    return result
