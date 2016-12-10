@@ -13,3 +13,4 @@ def topMatches(prefs, person, n=5, similarity=sim_distance):
     return scores[0:n]
 
 # print topMatches(critics,'Toby', n=2)
+

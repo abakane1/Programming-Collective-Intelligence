@@ -78,16 +78,3 @@ def transFormPrefs(prefs):
 
 # print(critics['Lisa Rose'])
 
-def calculateSimilarItems(prefs,n=10):
-    import topMatches
-    # 建立字典，以给出与这些物品最为相近的所有其他物品
-    result={}
-    
-    itemPrefs = transFormPrefs(prefs)
-    c=0
-    for item in itemPrefs:
-        c+=1
-        if c%100==0: print "%d / %d" % (c,len(itemPrefs))
-        scores = topMatches(itemPrefs,item,n=n,similarity = sim_distance)
-        result[item]=scores
-    return result
