@@ -19,4 +19,4 @@ def calculateSimilarItems(prefs, n=10):
     return result
 
 
-print(calculateSimilarItems(critics))
+# print(calculateSimilarItems(critics))
