@@ -26,4 +26,4 @@ def getRcommendations(prefs, person, similarity=sim_distance):
         rankings.reverse()
         return rankings
 
-print getRcommendations(critics,'Toby',similarity=sim_distance)
+#print getRcommendations(critics,'Toby',similarity=sim_distance)
