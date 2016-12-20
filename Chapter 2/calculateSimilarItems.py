@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # 定义编码格式
 from recommendations import critics  # 数据层
-from ReadRecommendations import sim_distance, transFormPrefs
+from ReadRecommendations import sim_distance, transFormPrefs, sim_Tanimoto
 from topMatches import topMatches
 
 
@@ -14,7 +14,7 @@ def calculateSimilarItems(prefs, n=10):
     for item in itemPrefs:
         c += 1
         if c % 100 == 0: print "%d / %d" % (c, len(itemPrefs))
-        scores = topMatches(itemPrefs, item, n=n, similarity=sim_distance)
+        scores = topMatches(itemPrefs, item, n=n, similarity=sim_Tanimoto)
         result[item] = scores
     return result
 
@@ -42,4 +42,4 @@ def getRecommendedItems(prefs, itemMatch, user):
     return rankings
 
 
-print(getRecommendedItems(critics, calculateSimilarItems(critics), 'Toby'))
+# print(getRecommendedItems(critics, calculateSimilarItems(critics), 'Toby'))

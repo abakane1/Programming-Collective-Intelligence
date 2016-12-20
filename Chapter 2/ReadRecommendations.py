@@ -78,3 +78,22 @@ def transFormPrefs(prefs):
 
 # print(critics['Lisa Rose'])
 
+# Tanimoto 相似度
+def sim_Tanimoto(prefs, p1,p2):
+    common ={}
+    for item in prefs[p1]:
+        if item in prefs[p2]:
+            common[item] = 1
+
+    if len(common) ==0:
+        return 0
+
+    common_num = len(common)
+    p1_num = len(prefs[p1])
+    p2_num = len(prefs[p2])
+    res = float(common_num)/(p1_num + p2_num - common_num)
+
+    return res
+
+# print sim_Tanimoto(critics, 'Lisa Rose', 'Gene Seymour')
+
