@@ -24,22 +24,41 @@ def getWordCounts(url):
 
 
 def getWords(html):
+    # 正则删除html
     txt = re.compile(r'<[^>]+>').sub('', html)
+    # 正则提取单词
     words = re.compile(r'[^A-Z^a-z]+').split(txt)
 
     return [word.lower() for word in words if word != '']
 
-apcount={}
-wordcounts={}
-title, wc = getWordCounts('http://rss.sciencedirect.com/publication/science/00344257')
-wordcounts[title] = wc
-for word, count in wc.items():
-    apcount.setdefault(word,0)
-    if count>1:
-        apcount[word] +=1
 
-# wordlist =[]
-# for w, bc in apcount.items():
-# out = file('blogdata.txt','w')
-# out.write('Blog')
-# for word in word
+apcount = {}
+wordcounts = {}
+feedlist = [line for line in file('Data/feedlist.txt')]
+for feedurl in feedlist:
+    title, wc = getWordCounts(feedurl)
+    wordcounts[title] = wc
+    for word, count in wc.items():
+        apcount.setdefault(word, 0)
+        if count > 1:
+            apcount[word] += 1
+
+# 选择出现概率在10%~50%单词
+wordlist = []
+for w, bc in apcount.items():
+    frac = float(bc) / len(feedlist)
+    if 0.1 < frac < 0.5: wordlist.append(w)
+
+# Output
+out = file('Result/blogdata.txt', 'w')
+out.write('Blog')
+for word in wordlist: out.write('\t%s' % word)
+out.write('\n')
+for blog, wc in wordcounts.items():
+    out.write(blog)
+    for word in wordlist:
+        if word in wc:
+            out.write('\t%d' % wc[word])
+        else:
+            out.write('\t0')
+    out.write('\n')
