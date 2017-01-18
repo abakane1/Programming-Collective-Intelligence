@@ -3,6 +3,7 @@
 import urllib2
 from BeautifulSoup import *
 from urlparse import urljoin
+from pysqlite2 import dbapi2 as sqlite
 
 # 忽略单词表
 ignoreWords = set(['the', 'of', 'to', 'and', 'a', 'in', 'is', 'it'])
@@ -11,13 +12,13 @@ ignoreWords = set(['the', 'of', 'to', 'and', 'a', 'in', 'is', 'it'])
 class crawler:
     # inited the database name
     def __init__(self, dbanme):
-        pass
+        self.con = sqlite.connect(dbanme)
 
     def __del__(self):
-        pass
+        self.con.close()
 
     def dbcommit(self):
-        pass
+        self.con.commit()
 
     # 获取条目的ID,如果不存在，添加db中
     def getEntryID(self, table, field, value, createnew=True):
@@ -59,7 +60,7 @@ class crawler:
 
                 links = soup('a')
                 for link in links:
-                    if ('href' in dict(link.attrs)):
+                    if 'href' in dict(link.attrs):
                         url = urljoin(page, link['href'])
                         if url.find("'") != -1: continue
                         url = url.split('#')[0]  # 去掉位置部分
@@ -73,4 +74,14 @@ class crawler:
 
     # 创建数据库表
     def createIndexTables(self):
-        pass
+        self.con.execute('create table urllist(url)')
+        self.con.execute('create table wordlist(word)')
+        self.con.execute('create table wordlocation(urlid, wordid, location)')
+        self.con.execute('create table link(fromid integer, toid integer)')
+        self.con.execute('create table linkwords(wordid, linkid)')
+        self.con.execute('create index wordidx on wordlist(word)')
+        self.con.execute('create index urlidx on urllist(url)')
+        self.con.execute('create index wordurlidx on wordlocation(wordid)')
+        self.con.execute('create index urltoidx on link(toid)')
+        self.con.execute('create index urlfromidx on link(fromid)')
+        self.dbcommit()
