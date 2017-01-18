@@ -30,11 +30,22 @@ class crawler:
 
     # 提取文字（no html）
     def getTextOnly(self, soup):
-        return None
+        v = soup.string
+        if v == None:
+            c = soup.contents
+            resulttext = ''
+            for t in c:
+                subtext = self.getTextOnly(t)
+                resulttext +=subtext+'\n'
+            return resulttext
+        else:
+            return v.strip()
 
     # 根据空白分词
     def sparatewords(self, text):
-        return None
+        splitter =re.compile('\\W*')
+        return [s.lower() for s in splitter.split(text) if s != '']
+
 
     # 判断是否索引
     def isIndexd(self, url):
