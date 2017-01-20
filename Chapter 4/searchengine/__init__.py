@@ -7,4 +7,6 @@ import searchengine
 #crawler.crawl(pagelist)
 
 crawler = searchengine.crawler('searchindex.db')
-crawler.createIndexTables()
+#crawler.createIndexTables()
+pagelist =['https://en.wikipedia.org/wiki/Bathsheba']
+crawler.crawl(pagelist)

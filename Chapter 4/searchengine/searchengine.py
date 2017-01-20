@@ -22,11 +22,33 @@ class crawler:
 
     # 获取条目的ID,如果不存在，添加db中
     def getEntryID(self, table, field, value, createnew=True):
-        return None
+        cur = self.con.execute("select rowid from %s where %s = '%s' " % (table, field, value))
+        res = cur.fetchone()
+        if res == None:
+            cur = self.con.execute("insert into %s (%s) values ('%s')" % (table,field,value))
+            return  cur.lastrowid
+        else:
+            return res[0]
 
     # 为网页建立索引
     def addtoIndex(self, url, soup):
-        print 'Indexing %s' % url
+        if self.isIndexd(url): return
+        print  'indexing ' + url
+
+        # get every word
+        text = self.getTextOnly(soup)
+        words = self.sparatewords(text)
+
+        # get the id of the url
+        urlid = self.getEntryID('urllist','url',url)
+
+        # attach the word with the url
+        for i in range(len(words)):
+            word = words[i]
+            if word in ignoreWords: continue
+            wordid = self.getEntryID('wordlist','word',word)
+            self.con.execute("insert into wordlocation(urlid,wordid,location) values (%d,%d,%d)" % (urlid,wordid,i))
+        # print 'Indexing %s' % url
 
     # 提取文字（no html）
     def getTextOnly(self, soup):
@@ -49,7 +71,12 @@ class crawler:
 
     # 判断是否索引
     def isIndexd(self, url):
+        u=self.con.execute("select rowid from urllist where url = '%s'" % url).fetchone()
+        if u != None:
+            v = self.con.execute('select * from wordlocation where urlid = %d' % u[0]).fetchone()
+            if v !=None:return True
         return False
+
 
     # 添加链接
     def addLinkRef(self, urlFrom, urlTo, linkText):
