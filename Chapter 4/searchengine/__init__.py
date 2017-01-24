@@ -6,7 +6,10 @@ import searchengine
 #crawler = searchengine.crawler('')
 #crawler.crawl(pagelist)
 
-crawler = searchengine.crawler('searchindex.db')
+#crawler = searchengine.crawler('searchindex.db')
 #crawler.createIndexTables()
-pagelist =['https://en.wikipedia.org/wiki/Bathsheba']
-crawler.crawl(pagelist)
+#pagelist =['https://en.wikipedia.org/wiki/Bathsheba']
+#crawler.crawl(pagelist)
+
+e = searchengine.searcher('searchindex.db')
+print e.getMatchRows('function program')
