@@ -12,4 +12,5 @@ import searchengine
 #crawler.crawl(pagelist)
 
 e = searchengine.searcher('searchindex.db')
-print e.getMatchRows('function program')
+#print e.getMatchRows('function program')
+e.query('function religions')
