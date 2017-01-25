@@ -11,6 +11,10 @@ import searchengine
 #pagelist =['https://en.wikipedia.org/wiki/Bathsheba']
 #crawler.crawl(pagelist)
 
-e = searchengine.searcher('searchindex.db')
+#e = searchengine.searcher('searchindex.db')
 #print e.getMatchRows('function program')
-e.query('function religions')
+#e.query('function religions')
+
+#pagerank
+crawler = searchengine.crawler('searchindex.db')
+crawler.calculatePageRank()

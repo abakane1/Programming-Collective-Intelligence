@@ -124,6 +124,29 @@ class crawler:
         self.con.execute('create index urlfromidx on link(fromid)')
         self.dbcommit()
 
+    # PageRank
+    def calculatePageRank(self,iterations =20):
+        # the score table should be inited
+        self.con.execute('drop table if exists pagerank')
+        self.con.execute('create table pagerank(urlid primary key, score)')
+
+        # the init score of every url is 1,0
+        self.con.execute('insert into pagerank select rowid, 1.0 from urllist')
+        self.dbcommit()
+
+        for i in range(iterations):
+            print "Iteration %d" % (i)
+            for (urlid,) in self.con.execute('select rowid from urllist'):
+                pr = 0.15
+
+                for (linker, ) in self.con.execute('select distinct fromid from link where toid=%d' % urlid):
+                    linkingpr = self.con.execute('select score from pagerank where urlid = %d' % linker).fetchone()[0]
+
+                    linkingcount = self.con.execute('select (*) from link where fromid=%d' % linker).fetchone()[0]
+                    pr+=0.85*(linkingpr/linkingcount)
+                self.con.execute('update pagerank set score=%f where urlid=%d' %(pr,urlid))
+            self.dbcommit()
+
 class searcher:
     def __init__(self,dbname):
         self.con=sqlite.connect(dbname)
@@ -208,3 +231,10 @@ class searcher:
             if loc <locations[row[0]]: locations[row[0]] = loc
 
         return self.normalizescores(locations,smallIsBetter=1)
+
+    # simple count
+    def inBoundLinkScore(self, rows):
+        uniqueurls = set([row[0] for row in rows])
+        inboundcount = dict([(u,self.con.execute('select count(*) from link where toid=%d' % u).fetchone()[0]) for u in uniqueurls])
+        return self.normalizescores(inboundcount)
+
