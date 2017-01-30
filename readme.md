@@ -15,4 +15,5 @@
 2. 2.7 Python 一些模块需要 C++ 9.0 的支持，尽管我安装了相应的版本，仍旧无法安装许多模块，stackoverflow提供了一些[solutions](http://stackoverflow.com/questions/2817869/error-unable-to-find-vcvarsall-bat)
 3. 我选择下载编译好的模块[地址](http://www.lfd.uci.edu/~gohlke/pythonlibs/),已经支持大部分模块并且提供了documents。
 4. [Python & pip Windows installation](https://github.com/BurntSushi/nfldb/wiki/Python-&-pip-Windows-installation)
+5. [SQLite Client](http://sqlitebrowser.org/)
 
