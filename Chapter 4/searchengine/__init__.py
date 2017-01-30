@@ -40,12 +40,25 @@ uWorldBank, uRiver, uEarth = [201, 202, 203]
 # print mynet.getResult([wWorld, wBank], [uWorldBank, uRiver, uEarth])
 
 # the test of train
-allurls = [uWorldBank, uRiver, uEarth]
-for i in range(30):
-    mynet.trainQuery([wWorld, wBank], allurls, uWorldBank)
-    mynet.trainQuery([wRiver, wBank], allurls, uRiver)
-    mynet.trainQuery([wWorld], allurls, uEarth)
+# allurls = [uWorldBank, uRiver, uEarth]
+# for i in range(30):
+#    mynet.trainQuery([wWorld, wBank], allurls, uWorldBank)
+#    mynet.trainQuery([wRiver, wBank], allurls, uRiver)
+#    mynet.trainQuery([wWorld], allurls, uEarth)
+#
+# print mynet.getResult([wWorld, wBank], allurls)
+# print mynet.getResult([wRiver, wBank], allurls)
+# print mynet.getResult([wBank], allurls)
 
-print mynet.getResult([wWorld, wBank], allurls)
-print mynet.getResult([wRiver, wBank], allurls)
-print mynet.getResult([wBank], allurls)
+
+# question: page 83 with the search engine
+e = searchengine.searcher('searchindex.db')
+
+#print e.getMatchRows('function program')
+wordids = e.query('function program c')[0]
+allurls = e.getALLUrl()
+selecturl = e.query('function program c')[1]
+for i in range(30):
+    mynet.trainQuery(wordids,allurls,selecturl)
+
+print mynet.getResult(wordids,allurls)
