@@ -5,6 +5,10 @@ from math import tanh
 from pysqlite2 import dbapi2 as sqlite
 
 
+def dtanh(y):
+    return 1.0 - y * y
+
+
 class searchnet:
     def __init__(self, dbname):
         self.con = sqlite.connect(dbname)
@@ -111,3 +115,50 @@ class searchnet:
     def getResult(self, wordids, urlids):
         self.setUpNetwork(wordids, urlids)
         return self.feedForward()
+
+    #
+    def backPropGate(self, targets, N=0.5):
+        output_deltas = [0.0] * len(self.urlids)
+        for k in range(len(self.urlids)):
+            error = targets[k] - self.ao[k]
+            output_deltas[k] = dtanh(self.ao[k]) * error
+
+        hidden_deltas = [0.0] * len(self.hiddenids)
+        for j in range(len(self.hiddenids)):
+            error = 0.0
+            for k in range(len(self.urlids)):
+                error += output_deltas[k] * self.wo[j][k]
+            hidden_deltas[j] = dtanh(self.ah[j]) * error
+
+        # renew the output w
+        for j in range(len(self.hiddenids)):
+            for k in range(len(self.urlids)):
+                change = output_deltas[k] * self.ah[j]
+                self.wo[j][k] += N * change
+
+        # renew the input w
+        for i in range(len(self.wordids)):
+            for j in range(len(self.hiddenids)):
+                change = hidden_deltas[j] * self.ai[i]
+                self.wi[i][j] = self.wi[i][j] + N * change
+
+    def trainQuery(self, wordids, urlids, selectedurl):
+        # create a hiddennode if needed
+        self.generateHiddenNode(wordids, urlids)
+        self.setUpNetwork(wordids, urlids)
+        self.feedForward()
+        targets = [0.0] * len(urlids)
+        targets[urlids.index(selectedurl)] = 1.0
+        self.backPropGate(targets)
+        self.updateDatabase()
+
+    def updateDatabase(self):
+        for i in range(len(self.wordids)):
+            for j in range(len(self.hiddenids)):
+                self.setStrength(self.wordids[i], self.hiddenids[j], 0, self.wi[i][j])
+
+        for j in range(len(self.hiddenids)):
+            for k in range(len(self.urlids)):
+                self.setStrength(self.hiddenids[j], self.urlids[k], 1, self.wo[j][k])
+
+        self.con.commit()

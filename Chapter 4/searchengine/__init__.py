@@ -35,5 +35,17 @@ mynet = nn.searchnet('nn.db')
 # mynet.maketables()
 wWorld, wRiver, wBank = [101, 102, 103]
 uWorldBank, uRiver, uEarth = [201, 202, 203]
-#mynet.generateHiddenNode([wWorld, wBank], [uWorldBank, uRiver, uEarth])
-print mynet.getResult([wWorld, wBank], [uWorldBank, uRiver, uEarth])
+# mynet.generateHiddenNode([wWorld, wBank], [uWorldBank, uRiver, uEarth])
+# mynet.trainQuery([wWorld, wBank], [uWorldBank, uRiver, uEarth],uWorldBank)
+# print mynet.getResult([wWorld, wBank], [uWorldBank, uRiver, uEarth])
+
+# the test of train
+allurls = [uWorldBank, uRiver, uEarth]
+for i in range(30):
+    mynet.trainQuery([wWorld, wBank], allurls, uWorldBank)
+    mynet.trainQuery([wRiver, wBank], allurls, uRiver)
+    mynet.trainQuery([wWorld], allurls, uEarth)
+
+print mynet.getResult([wWorld, wBank], allurls)
+print mynet.getResult([wRiver, wBank], allurls)
+print mynet.getResult([wBank], allurls)
