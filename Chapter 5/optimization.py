@@ -161,3 +161,4 @@ def geneticoptimize(domain, costf, popsize=100, step=1, mutprob=0.2, elite=0.2, 
 
         print scores[0][0]
     return scores[0][1]
+
