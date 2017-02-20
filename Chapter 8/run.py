@@ -19,4 +19,11 @@ data = numpredict.winesetdefaut()
 # print numpredict.inverseweight(1)
 # print numpredict.gaussian(3.0)
 
-print numpredict.weightedknn(data,(99.0,5.0))
+# print numpredict.weightedknn(data,(99.0,5.0))
+
+# print numpredict.crossvalidate(numpredict.knnestimate,data)
+
+# def knn3(d,v): return numpredict.knnestimate(d,v,k=3)
+# print numpredict.crossvalidate(knn3,data)
+def knn1(d,v): return numpredict.knnestimate(d,v,k=1)
+print numpredict.crossvalidate(knn1,data)
