@@ -126,3 +126,12 @@ def rescale(data,scale):
         scaled=[scale[i]*row['input'][i] for i in range(len(scale))]
         scaleddata.append({'input':scaled,'result':row['result']})
     return scaleddata
+
+def createcostfunction(algf,data):
+    def costf(scale):
+        sdata=rescale(data,scale)
+        return crossvalidate(algf,sdata,trials=10)
+    return costf
+
+weightdomian=[(0,20)]*4
+

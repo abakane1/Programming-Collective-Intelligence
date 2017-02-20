@@ -1,4 +1,5 @@
 import numpredict
+import optimization
 
 # print numpredict.winpreice(95.0,3.0)
 
@@ -23,16 +24,19 @@ import numpredict
 
 # print numpredict.crossvalidate(numpredict.knnestimate,data)
 
-def knn3(d,v): return numpredict.knnestimate(d,v,k=3)
+#def knn3(d,v): return numpredict.knnestimate(d,v,k=3)
 # print numpredict.crossvalidate(knn3,data)
-def knn1(d,v): return numpredict.knnestimate(d,v,k=1)
+#def knn1(d,v): return numpredict.knnestimate(d,v,k=1)
 #print numpredict.crossvalidate(knn1,data)
 
 
 data = numpredict.wineset2()
 # print data
 
-print numpredict.crossvalidate(knn3,data)
+#print numpredict.crossvalidate(knn3,data)
 
-sdata=numpredict.rescale(data,[10,10,0,0.5])
-print numpredict.crossvalidate(knn3,data)
+#sdata=numpredict.rescale(data,[10,10,0,0.5])
+#print numpredict.crossvalidate(knn3,data)
+
+costf=numpredict.createcostfunction(numpredict.knnestimate,data)
+#print optimization.annealingoptimize(numpredict.weightdomian,costf,step=2)
