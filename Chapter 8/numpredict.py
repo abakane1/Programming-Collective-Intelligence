@@ -1,5 +1,6 @@
 from random import random, randint
 import math
+from pylab import *
 
 
 def winpreice(rating, age):
@@ -134,4 +135,51 @@ def createcostfunction(algf,data):
     return costf
 
 weightdomian=[(0,20)]*4
+
+def wineset3():
+    rows=winesetdefaut()
+    for row in rows:
+        if random()<0.5:
+            row['result']*=0.5
+    return rows
+
+def probguess(data,vec1,low,high,k=5,weightf=gaussian):
+    dlist=getDistances(data,vec1)
+    nweight=0.0
+    tweight=0.0
+
+    for i in range(k):
+        dist=dlist[i][0]
+        idx=dlist[i][1]
+        weight=weightf(dist)
+        v=data[idx]['result']
+
+        if v>=low and v<=high:
+            nweight+=weight
+        tweight+=weight
+    if tweight==0:return 0
+    return nweight/tweight
+
+def cumulativegraph(data,vec1,high,k=5, weightf=gaussian):
+    t1= arange(0.0, high,0.1)
+    cprob=array([probguess(data,vec1,0,v,k,weightf) for v in t1])
+    plot(t1, cprob)
+    show()
+
+def probabilitygraph(data,vec1,high,k=5,weightf=gaussian,ss=0.5):
+    t1=arange(0.0,high,0.1)
+    probs=[probguess(data,vec1,v,v+0.1,k,weightf) for v in t1]
+
+    smoothed=[]
+    for i in range(len(probs)):
+        sv=0.0
+        for j in range(0,len(probs)):
+            dist=abs(i-j)*0.1
+            weight=gaussian(dist,sigma=ss)
+            sv+=weight*probs[j]
+        smoothed.append(sv)
+    smoothed=array(smoothed)
+
+    plot(t1,smoothed)
+    show()
 
