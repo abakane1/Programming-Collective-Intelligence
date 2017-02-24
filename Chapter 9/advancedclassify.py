@@ -1,6 +1,8 @@
 from pylab import *
 import googlemaps
 from datetime import datetime
+import csv
+from svm import *
 
 
 #######################
@@ -65,6 +67,10 @@ def dotproduct(v1, v2):
     return sum([v1[i] * v2[i] for i in range(len(v1))])
 
 
+def veclength(v):
+    return sum([p ** 2 for p in v])
+
+
 def dpclassify(point, avgs):
     b = (dotproduct(avgs[1], avgs[1]) - dotproduct(avgs[0], avgs[0])) / 2
     y = dotproduct(point, avgs[0]) - dotproduct(point, avgs[1]) + b
@@ -106,7 +112,7 @@ def milesdistance(a1, a2):
     geodistance = gmaps.distance_matrix(a1, a2)
     if geodistance['status'] == 'OK':
         for row in geodistance['rows']:
-            mils = row['elements'][0]['duration']['text'].split(' ')[0]
+            mils = float(row['elements'][0]['duration']['text'].split(' ')[0])
             return mils
 
     else:
@@ -134,11 +140,15 @@ def testgooglemap():
 def loadnumerical():
     oldrows = loadmatch('matchmaker.csv')
     newros = []
+    dataCSV = open('newmatch.csv', 'w')
+    writer = csv.writer(dataCSV, dialect='excel')
     for row in oldrows:
         d = row.data
-        data = [float(d[0]), yesno(d[1]), yesno(d[2]), float(d[5]), yesno(d[5]), yesno(d[7]), matchcount(d[3], d[8]),
+        data = [float(d[0]), yesno(d[1]), yesno(d[2]), float(d[5]), yesno(d[6]), yesno(d[7]), matchcount(d[3], d[8]),
                 milesdistance(d[4], d[9]), row.match]
+        writer.writerow(data)
         newros.append(matchrow(data))
+
     return newros
 
 
@@ -149,12 +159,66 @@ def scaledata(rows):
     for row in rows:
         d = row.data
         for i in range(len(d)):
-            if d[i] < low[i]: low[i] = d[i]
-            if d[i] > high[i]: high[i] = d[i]
+            if float(d[i]) < float(low[i]): low[i] = float(d[i])
+            if float(d[i]) > float(high[i]): high[i] = float(d[i])
 
     def scaleinput(d):
-        return [(d.data[i] - low[i]) / (high[i] - low[i]) for i in range(len(low))]
+        return [(float(d[i]) - low[i]) / (high[i] - low[i]) for i in range(len(low))]
 
     newrows = [matchrow(scaleinput(row.data) + [row.match]) for row in rows]
 
     return newrows, scaleinput
+
+
+def rbf(v1, v2, gamma=20):
+    dv = [float(v1[i]) - float(v2[i]) for i in range(len(v1))]
+    l = veclength(dv)
+    return math.e ** (-gamma * 1)
+
+
+def nlclassify(point, rows, offset, gamma=10):
+    sum0 = 0.0
+    sum1 = 0.0
+    count0 = 0
+    count1 = 0
+
+    for row in rows:
+        if row.match == 0:
+            sum0 += rbf(point, row.data, gamma)
+            count0 += 1
+        else:
+            sum1 += rbf(point, row.data, gamma)
+            count1 += 1
+    y = (1.0 / count0) * sum0 - (1.0 / count1) / sum1 + offset
+
+    if y < 0:
+        return 0
+    else:
+        return 1
+
+
+def getoffset(rows, gamma=10):
+    l0 = []
+    ll = []
+    for row in rows:
+        if row.match == 0:
+            l0.append(row.data)
+        else:
+            ll.append(row.data)
+    sum0 = sum(sum([rbf(v1, v2, gamma) for v1 in l0]) for v2 in l0)
+    sum1 = sum(sum([rbf(v1, v2, gamma) for v1 in ll]) for v2 in ll)
+
+    return (1.0 / (len(ll) ** 2)) * sum1 - (1.0 / (len(l0) ** 2)) * sum0
+
+#######################
+#
+# Using LIBSVM
+#
+#######################
+
+# A Sample Session
+def testLIBSVM():
+    prob =svm_problem([1,-1],[[1,0,1],[-1,0,-1]])
+    param = svm_parameter(kernel_type = LINEAR, C =10)
+    m =svm_model(prob,param)
+    return m.predict([1,1,1])
