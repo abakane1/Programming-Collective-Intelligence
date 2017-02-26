@@ -3,6 +3,7 @@ import googlemaps
 from datetime import datetime
 import csv
 from svm import *
+from svmutil import *
 
 
 #######################
@@ -218,7 +219,11 @@ def getoffset(rows, gamma=10):
 
 # A Sample Session
 def testLIBSVM():
-    prob =svm_problem([1,-1],[[1,0,1],[-1,0,-1]])
-    param = svm_parameter(kernel_type = LINEAR, C =10)
-    m =svm_model(prob,param)
-    return m.predict([1,1,1])
+    # Specify training set
+    prob = svm_problem([1, -1], [[1, 0, 1], [-1, 0, -1]])
+    # Train the model
+    m = svm_train(prob, '-t 0 -c 1')
+    # Make a prediction
+    predicted_labels, _, _ = svm_predict([-1], [[1, 1, 1]], m)
+    # Predicted label for input [1,1,1] is predicted_labels[0]
+    print "Predicted value: " + str(predicted_labels[0])
