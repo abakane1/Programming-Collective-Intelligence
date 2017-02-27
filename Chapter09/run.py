@@ -27,4 +27,4 @@ agesonly = advancedclassify.loadmatch('agesonly.csv',allnum=True)
 # newrow=[28.0,-1,-1,26.0,-1,1,2,0.8]
 # print advancedclassify.nlclassify(scalf(newrow),scaledset,ssoffset)
 
-print advancedclassify.testLIBSVM()
+advancedclassify.testLIBSVM()
