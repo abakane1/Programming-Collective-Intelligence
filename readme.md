@@ -18,3 +18,5 @@
 5. [SQLite Client](http://sqlitebrowser.org/)
 6. [import the package of python](http://smilejay.com/2013/09/use-modules-in-other-directories/)
 
+## finished on Feb 27  
+
