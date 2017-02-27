@@ -16,4 +16,5 @@
 3. 我选择下载编译好的模块[地址](http://www.lfd.uci.edu/~gohlke/pythonlibs/),已经支持大部分模块并且提供了documents。
 4. [Python & pip Windows installation](https://github.com/BurntSushi/nfldb/wiki/Python-&-pip-Windows-installation)
 5. [SQLite Client](http://sqlitebrowser.org/)
+6. [import the package of python](http://smilejay.com/2013/09/use-modules-in-other-directories/)
 
