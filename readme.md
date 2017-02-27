@@ -1,9 +1,9 @@
-# code of the Programming Collective Intelligence
+# Code of the Programming Collective Intelligence
 
 ---
 
 
-0. Begin 20161206
+## Begin 20161206
 1. idea comes from [zhihu](https://www.zhihu.com/question/28530832)
 2. IDE Pycharm
 3. 配合教材 统计机器学习。
@@ -18,5 +18,5 @@
 5. [SQLite Client](http://sqlitebrowser.org/)
 6. [import the package of python](http://smilejay.com/2013/09/use-modules-in-other-directories/)
 
-## finished on Feb 27  
+## finished on 20170227  
 
